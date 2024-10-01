@@ -3,23 +3,23 @@
         "common": {
             "scale": "10 7 1",
             "rotation": "0 0 0",
-            "fixedAngleDegrees": 80,
-            "initialY": 0.6,
-            "initialZ": -26
+            "fixedAngleDegrees": -23.42,
+            "initialY": -10.74,
+            "initialZ": -91.76
         },
         "media": [
             {
                 "type": "image",
                 "url": "./assets/images/01.jpg",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
+                "info": "Tower Bridge",
                 "audioUrl": ""
             },
             {
                 "type": "video",
                 "url": "https://rayhol.github.io/TB_Videos/Videos3/01.mp4",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
+                "info": "Tower Bridge",
                 "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/01.mp3"
             }
         ]
@@ -28,23 +28,23 @@
         "common": {
             "scale": "10 7 1",
             "rotation": "0 0 0",
-            "fixedAngleDegrees": 115.60,
-            "initialY": -5,
-            "initialZ": -25
+            "fixedAngleDegrees": -59.98,
+            "initialY": 0.60,
+            "initialZ": -50.02
         },
         "media": [
             {
                 "type": "image",
                 "url": "./assets/images/02.jpg",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
+                "info": "The Shard",
                 "audioUrl": ""
             },
             {
                 "type": "video",
                 "url": "https://rayhol.github.io/TB_Videos/Videos3/02.mp4",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
+                "info": "The Shard",
                 "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/02.mp3"
             }
         ]
@@ -53,23 +53,23 @@
         "common": {
             "scale": "10 7 1",
             "rotation": "0 0 0",
-            "fixedAngleDegrees": -84.14,
-            "initialY": -1.15,
-            "initialZ": -29.01
+            "fixedAngleDegrees": -103.65,
+            "initialY": -7.30,
+            "initialZ": 23.61
         },
         "media": [
             {
                 "type": "image",
                 "url": "./assets/images/03.jpg",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
+                "info": "London Eye",
                 "audioUrl": ""
             },
             {
                 "type": "video",
                 "url": "https://rayhol.github.io/TB_Videos/Videos3/03.mp4",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
+                "info": "London Eye",
                 "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/03.mp3"
             }
         ]
@@ -78,23 +78,23 @@
         "common": {
             "scale": "10 7 1",
             "rotation": "0 0 0",
-            "fixedAngleDegrees": 80,
-            "initialY": 1.12,
-            "initialZ": -26
+            "fixedAngleDegrees": -126.54,
+            "initialY": -15,
+            "initialZ": 60
         },
         "media": [
             {
                 "type": "image",
                 "url": "./assets/images/04.jpg",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
+                "info": "St Pauls",
                 "audioUrl": ""
             },
             {
                 "type": "video",
                 "url": "https://rayhol.github.io/TB_Videos/Videos3/04.mp4",
                 "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
+                "info": "St Pauls",
                 "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/04.mp3"
             }
         ]
