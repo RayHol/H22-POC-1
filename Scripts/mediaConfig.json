@@ -1,7 +1,7 @@
 {
     "location1": {
         "common": {
-            "scale": "10 2 1",
+            "scale": "10 6 1",
             "rotation": "0 0 0",
             "fixedAngleDegrees": -28.27,
             "initialY": -13.51,
@@ -27,7 +27,7 @@
     },
     "location2": {
         "common": {
-            "scale": "10 10 1",
+            "scale": "10 6 1",
             "rotation": "0 0 0",
             "fixedAngleDegrees": -60,
             "initialY": 0,
@@ -53,7 +53,7 @@
     },
     "location3": {
         "common": {
-            "scale": "10 10 1",
+            "scale": "10 6 1",
             "rotation": "0 0 0",
             "fixedAngleDegrees": -103.65,
             "initialY": -7.30,
@@ -79,7 +79,7 @@
     },
     "location4": {
         "common": {
-            "scale": "10 10 1",
+            "scale": "10 6 1",
             "rotation": "0 0 0",
             "fixedAngleDegrees": -126.54,
             "initialY": -15,

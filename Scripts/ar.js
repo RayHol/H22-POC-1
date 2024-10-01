@@ -409,37 +409,60 @@ function displayMedia(mediaItem, index, commonValues, currentPosition, currentRo
     // Set the media URL for the image
     entity.setAttribute("src", mediaItem.url);
 
-    // Load the image to get its natural dimensions and maintain the correct aspect ratio
-    const img = new Image();
-    img.src = mediaItem.url;
+    // Add the 'clickable' class to make the image detectable by the raycaster
+    entity.classList.add('clickable');
 
-    img.onload = function() {
-        const naturalWidth = img.width;
-        const naturalHeight = img.height;
-        
-        // Calculate the aspect ratio
-        const aspectRatio = naturalWidth / naturalHeight;
+    // Set the scale exactly as defined in the mediaConfig.json
+    let scaleComponents = commonValues.scale.split(' ').map(Number);
+    entity.setAttribute("scale", `${scaleComponents[0]} ${scaleComponents[1]} ${scaleComponents[2]}`);
 
-        // Extract the base scale from commonValues.scale (assuming it's in the format "width height depth")
-        let scaleComponents = commonValues.scale.split(' ').map(Number);
-        let baseWidth = scaleComponents[0];
-        let baseHeight = scaleComponents[1];
+    // Set the position and rotation of the entity based on the mediaConfig.json values
+    entity.setAttribute("position", currentPosition);
+    entity.setAttribute("rotation", currentRotation);
+    entity.setAttribute("visible", "true");
 
-        // Adjust the height based on the aspect ratio to preserve the natural proportions
-        const adjustedHeight = baseWidth / aspectRatio;
+    // Add the entity to the scene
+    scene.appendChild(entity);
 
-        // Set the new scale while maintaining aspect ratio
-        entity.setAttribute("scale", `${baseWidth} ${adjustedHeight} ${scaleComponents[2]}`);
-        
-        // Set the position and rotation of the entity based on the mediaConfig.json values
-        entity.setAttribute("position", currentPosition);
-        entity.setAttribute("rotation", currentRotation);
-        entity.setAttribute("visible", "true");
+    // Add a raycaster event to show the CTA modal when the image is hovered (intersected)
+    entity.addEventListener('raycaster-intersected', function () {
+        console.log('Image intersected:', mediaItem.url);
+        entity.setAttribute('material', 'color', 'green');  // Change color on hover/tap
 
-        // Add the entity to the scene
-        scene.appendChild(entity);
-    };
+        // Show the modal with the CTA link
+        const modal = document.getElementById('cta-modal');
+        const ctaLink = document.getElementById('cta-link');
+
+        // Set the link URL
+        if (mediaItem.link) {
+            ctaLink.href = mediaItem.link;
+        } else {
+            ctaLink.href = '#';
+        }
+
+        // Display the modal
+        modal.style.display = 'flex';
+    });
+
+    entity.addEventListener('raycaster-intersected-cleared', function () {
+        console.log('Image no longer intersected:', mediaItem.url);
+        entity.setAttribute('material', 'color', 'white');  // Reset color
+    });
 }
+
+// Close modal when clicking on the 'X' button
+document.getElementById('close-cta-modal').addEventListener('click', function() {
+    document.getElementById('cta-modal').style.display = 'none';
+});
+
+// Optional: Close modal when clicking outside of the modal content
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('cta-modal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+
 
 
 
