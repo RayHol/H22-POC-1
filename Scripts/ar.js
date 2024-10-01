@@ -166,42 +166,28 @@ function initializeAR() {
     const urlParams = new URLSearchParams(window.location.search);
     const locationId = urlParams.get("location");
 
-    if (!locationId) {
-        console.error("No location specified in URL");
-        return;
-    }
-
     fetch("./Scripts/mediaConfig.json")
         .then((response) => response.json())
         .then((data) => {
-            locations = Object.keys(data);
-            currentLocationIndex = locations.indexOf(locationId);
-
-            if (!data[locationId]) {
-                console.error("Invalid location specified");
-                return;
-            }
-
-            const locationData = data[locationId];
-            const commonValues = locationData.common;
-            mediaArray = locationData.media;
-
-            fixedAngleDegrees = commonValues.fixedAngleDegrees || 0;
-            currentY = commonValues.initialY || 0;
-            currentZoom = Math.abs(commonValues.initialZ) || 25;
-
-            const radians = (fixedAngleDegrees * Math.PI) / 180;
-            initialMediaState.position = {
-                x: -currentZoom * Math.sin(radians),
-                y: currentY,
-                z: -currentZoom * Math.cos(radians)
-            };
-            initialMediaState.rotation = { x: 0, y: fixedAngleDegrees, z: 0 };
-
-            initializeMedia(mediaArray, commonValues);
+            // Load media from multiple locations (location1, location2, location3, location4)
+            const locationsToLoad = ['location1', 'location2', 'location3', 'location4'];
+            
+            locationsToLoad.forEach(locationKey => {
+                if (data[locationKey]) {
+                    const locationData = data[locationKey];
+                    const commonValues = locationData.common;
+                    const mediaArray = locationData.media;
+                    
+                    // Initialize media for each location
+                    initializeMedia(mediaArray, commonValues);
+                } else {
+                    console.error(`Invalid location: ${locationKey}`);
+                }
+            });
         })
         .catch((error) => console.error("Error loading media config:", error));
 }
+
 
 
 function updateFixedAngleDegrees(newAngle) {
@@ -390,97 +376,60 @@ function initializeMedia(mediaArray, commonValues) {
     const newButton = button.cloneNode(true);
     button.parentNode.replaceChild(newButton, button);
 
-    // Add new event listener for changing media
-    newButton.addEventListener("click", () => {
-        changeMedia(mediaArray, commonValues); // Pass the mediaArray to changeMedia function
+    // Filter media to include only images
+    const imageMediaArray = mediaArray.filter(mediaItem => mediaItem.type === "image");
+
+    // Display only the filtered image media (up to 4 items)
+    const maxMediaToDisplay = Math.min(imageMediaArray.length, 4);
+    imageMediaArray.slice(0, maxMediaToDisplay).forEach((mediaItem, index) => {
+        displayMedia(imageMediaArray, index, commonValues); // Display each image item
     });
 
-    displayMedia(mediaArray, modelIndex, commonValues); // Pass mediaArray, modelIndex and commonValues to displayMedia
+    newButton.addEventListener("click", () => {
+        changeMedia(imageMediaArray, commonValues); // Handle media change logic for images
+    });
 }
 
 
-function displayMedia(mediaArray, index, commonValues, currentPosition, currentRotation) {
-    removeAllMedia();
 
+function displayMedia(mediaArray, index, commonValues, currentPosition, currentRotation) {
     let scene = document.querySelector("a-scene");
     let mediaItem = mediaArray[index];
-    
 
-    // Calculate initial position and rotation based on the provided values or commonValues
+    // Calculate the position using fixedAngleDegrees, initialY, and initialZ (for zoom)
     const fixedAngleDegrees = commonValues.fixedAngleDegrees || 0;
     const radians = (fixedAngleDegrees * Math.PI) / 180;
-    const position = currentPosition || {
-        x: -currentZoom * Math.sin(radians),
-        y: commonValues.initialY || 0,
-        z: -currentZoom * Math.cos(radians)
-    };
-    const rotation = currentRotation || { x: 0, y: fixedAngleDegrees, z: 0 };
 
+    // Ensure initialZ (zoom) is applied to the position calculation
+    const zoom = commonValues.initialZ || 25; // Default to 25 if initialZ is not provided
+    const positionOffsetX = index * 5; // Offset for each media to avoid overlap
+
+    // Calculate position using zoom (initialZ) and fixedAngleDegrees
+    const position = currentPosition || {
+        x: -zoom * Math.sin(radians) + positionOffsetX, // X offset and zoom applied
+        y: commonValues.initialY || 0,                 // Y position from commonValues
+        z: -zoom * Math.cos(radians)                   // Z position for depth (zoom)
+    };
+
+    const rotation = currentRotation || { x: 0, y: fixedAngleDegrees, z: 0 };
 
     initialMediaState.position = { ...position };
     initialMediaState.rotation = { ...rotation };
 
     let entity;
-    const buttonText = document.querySelector('.button-text');
-    let imageEntity;
 
     if (mediaItem.type === "image") {
         entity = document.createElement("a-image");
         entity.setAttribute("src", mediaItem.url);
-        entity.setAttribute("position", position);
-        entity.setAttribute("rotation", rotation);
+        entity.setAttribute("position", position);   // Set position with zoom applied
+        entity.setAttribute("rotation", rotation);   // Set rotation
         entity.setAttribute("scale", commonValues.scale);
         entity.setAttribute("visible", "true");
 
         scene.appendChild(entity);
-        entity.flushToDOM();
-        imageEntity = entity;
-
-        buttonText.innerText = mediaItem.info;
-        createLookImages();
-    } else if (mediaItem.type === "video") {
-        
-
-        imageEntity = document.createElement("a-image");
-        const placeholderUrl = mediaArray[0].type === "image" ? mediaArray[0].url : './assets/Smartify-logo.svg';
-        imageEntity.setAttribute("src", placeholderUrl); 
-        imageEntity.setAttribute("position", position);
-        imageEntity.setAttribute("rotation", rotation);
-        imageEntity.setAttribute("scale", commonValues.scale);
-        imageEntity.setAttribute("visible", "true");
-        scene.appendChild(imageEntity);
-        imageEntity.flushToDOM();
-
-        entity = document.createElement("a-video");
-        entity.setAttribute("src", mediaItem.url);
-        entity.setAttribute("autoplay", "false");
-        entity.setAttribute("loop", "true");
-        entity.setAttribute("playsinline", "true");
-        entity.setAttribute("muted", "true");
-        entity.setAttribute("position", position);
-        entity.setAttribute("rotation", rotation);
-        entity.setAttribute("scale", commonValues.scale);
-        entity.setAttribute("preload", "auto");
-        entity.setAttribute("visible", "false");
-
-        scene.appendChild(entity);
-        entity.flushToDOM();
-        videoEntity = entity;
-
-        setTimeout(() => {
-            entity.setAttribute("visible", "true");
-
-            setTimeout(() => {
-                entity.play().catch((error) => console.error("Error playing video:", error));
-            }, 1000);
-
-            fadeOutElement(imageEntity);
-        }, 2000);
-
-        buttonText.innerText = mediaItem.info;
-        createLookImages();
     }
 
+    // Handle audio if present (not relevant to your current case)
     if (mediaItem.audioUrl) {
         if (currentAudio) {
             currentAudio.pause();
@@ -499,28 +448,8 @@ function displayMedia(mediaArray, index, commonValues, currentPosition, currentR
             currentAudio.play();
         }
     }
-
-    mediaEntity = entity;
-
-    mediaEntity.setAttribute("position", position);
-    mediaEntity.setAttribute("rotation", rotation);
-
-    const confirmedPosition = mediaEntity.getAttribute("position");
-    const confirmedRotation = mediaEntity.getAttribute("rotation");
-    
-
-    setTimeout(() => {
-        const doubleCheckPosition = mediaEntity.getAttribute("position");
-        const doubleCheckRotation = mediaEntity.getAttribute("rotation");
-    }, 100);
-
-    setTimeout(() => {
-        scene.flushToDOM();
-    }, 200);
-
-    updateCurrentValues();
-    updateLookImages();
 }
+
 
 
 function fadeOutElement(element) {
