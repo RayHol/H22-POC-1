@@ -167,6 +167,70 @@
             <p>Please switch to portrait mode to continue using the app.</p>
         </div>
     </div> -->
+  
+  <!-- Modal for CTA -->
+<div id="cta-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span id="close-cta-modal" class="close">&times;</span>
+        <p id="cta-text">Explore more at:</p>
+        <a id="cta-link" href="#" target="_blank">Visit Site</a>
+    </div>
+</div>
+
+<!-- Modal Styles -->
+<!-- Modal Styles -->
+<style>
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    bottom: 10%; /* Position the modal 10% from the bottom */
+    width: 100%; /* Full width */
+    justify-content: center;
+    align-items: flex-end; /* Align to the bottom */
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    text-align: center;
+    border-radius: 8px;
+    margin: 0 10%; /* Center horizontally with margin */
+    margin-bottom: 20px; /* Add spacing from the bottom */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#cta-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#cta-link:hover {
+    background-color: #0056b3;
+}
+</style>
+
 
     <!--AFrame and ARjs scene -->  
     <div class="centered instructions"></div>
@@ -174,9 +238,16 @@
     <a-scene id="ar-scene" vr-mode-ui="enabled: false" arjs="debugUIEnabled: false;" style="display:block;">
         <a-light type="ambient" color="#ffffff"></a-light>
         <a-light type="directional" color="#ffffff" position="-2 4 5"></a-light>
-        <a-entity camera rotation-reader look-controls="touchEnabled: false" position="0 1.6 0"></a-entity>
-        
+        <a-entity camera rotation-reader look-controls="touchEnabled: false" raycaster="objects: .clickable" position="0 1.6 0"></a-entity>
+      
     </a-scene>
+  
+<!--  <a-scene id="ar-scene" vr-mode-ui="enabled: false" arjs="debugUIEnabled: false;">
+   <a-entity camera rotation-reader look-controls="enabled: false; touchEnabled: false" raycaster="objects: .clickable" position="0 1.6 0"></a-entity>
+
+</a-scene> -->
+
+
 
   <!--UI buttons -->  
     <div class="icon-buttons">
@@ -210,6 +281,8 @@
             initializeAR();
         }
     });
+    
+
     </script>
 
 
