@@ -42,7 +42,8 @@
         </div>
     </div>
 
-    <!-- Welcome overlay page -->
+    <!-- Welcome overlay page (commented out for POC) -->
+    <!--
     <div class="overlay" id="overlay">
         <div class="overlay-background"></div>
         <div class="overlay-content">
@@ -51,7 +52,7 @@
                 <h1 class="overlay-header1">Launching a landmark</h1>
                 <h1 class="overlay-header1-v2">The unseen opening weeks</h1>
                 <div class="overlay-line"></div>
-<!--                 <h2 class="overlay-header2">A new bridge for Londoners</h2> -->
+
                 <div class="powered-by-container">
                 <h3 id="powered-by-welcome">POWERED BY</h3>
                 <img id="smartify-logo-welcome" src="./assets/images/UI/Smartify-Logo-White.svg" alt="Smartify Logo" width="75" height="34">
@@ -71,9 +72,10 @@
         </div>
         
     </div>
-  
-  
-    <!-- Full-screen overlay page -->
+    -->
+
+    <!-- Full-screen overlay page (commented out for POC) -->
+    <!--
     <div class="overlay" id="full-screen-overlay" style="display: none;">
         <div class="overlay-content">
             <h1 class="fsinstructions-h1">BEFORE WE START</h1>
@@ -102,6 +104,7 @@
             </div>
         </div>
     </div>
+    -->
 
     <!-- Help overlay page -->
     <div  class="overlay" id="help-overlay" style="display: none;">
@@ -132,7 +135,7 @@
     </div>
 
      <!-- Congratulations overlay page -->
-   <div class="overlay" id="congratulations-overlay" style="display: none;">
+<!--    <div class="overlay" id="congratulations-overlay" style="display: none;">
     <div class="popup-content">
         <img src="./assets/images/UI/congrats-icon.svg" class="congrats-image" alt="Congratulations Icon">
         <div class="congrats-text">
@@ -144,11 +147,10 @@
         </div>
         <div class="button-container">
             <button id="continue-button" data-action="next">Continue to next image</button>
-<!--             <button id="back-button" data-action="previous">Go back to previous image</button> -->
         </div>
         <button id="close-congrats-overlay" class="close-button"></button>
     </div>
-</div>
+</div> -->
   
      <!-- Map overlay -->
     <div  class="overlay" id="map-overlay" style="display: none;">
@@ -159,17 +161,17 @@
         </div>
     </div>
   
-   <div id="orientation-overlay" style="display: none;">
+<!--    <div id="orientation-overlay" style="display: none;">
         <div class="orientation-popup">
             <img src="./assets/images/UI/rotate.svg" alt="rotate icon" class="rotate-icon">
             <p>Please switch to portrait mode to continue using the app.</p>
         </div>
-    </div>
+    </div> -->
 
     <!--AFrame and ARjs scene -->  
     <div class="centered instructions"></div>
 
-    <a-scene id="ar-scene" vr-mode-ui="enabled: false" arjs="debugUIEnabled: false;" style="display:none;">
+    <a-scene id="ar-scene" vr-mode-ui="enabled: false" arjs="debugUIEnabled: false;" style="display:block;">
         <a-light type="ambient" color="#ffffff"></a-light>
         <a-light type="directional" color="#ffffff" position="-2 4 5"></a-light>
         <a-entity camera rotation-reader look-controls="touchEnabled: false" position="0 1.6 0"></a-entity>
@@ -177,9 +179,9 @@
 
   <!--UI buttons -->  
     <div class="icon-buttons">
-        <button id="view-map" class="icon-button">
+<!--         <button id="view-map" class="icon-button">
             <img src="./assets/images/UI/map-icon.svg" alt="Map button" class="button-icon"> Map
-        </button>
+        </button> -->
         <button id="refresh" class="icon-button">
             <img src="./assets/images/UI/refresh-icon.svg" alt="Refresh button" class="button-icon"> Refresh
         </button>
@@ -194,62 +196,20 @@
     </div>
     
 
-
     <script src="./Scripts/ar.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const startExperienceButton = document.getElementById('start-experience');
-        const gotItButton = document.getElementById('got-it-button');
-        const overlay = document.getElementById('overlay');
-        const fullScreenOverlay = document.getElementById('full-screen-overlay');
         const arScene = document.getElementById('ar-scene');
-        const loadingOverlay = document.getElementById('loading-overlay');
 
-        overlay.classList.add('prehide');
-        fullScreenOverlay.classList.add('prehide');
+        // Automatically display the AR scene without waiting for overlays
+        arScene.style.display = 'block';
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const skipOverlays = urlParams.get("skipOverlays");
-
-        // Detect Samsung Browser
-        const isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
-
-        // Update the ar-scene element if Samsung Browser is detected
-        if (isSamsungBrowser) {
-            arScene.removeAttribute('embedded');
-            arScene.classList.add('samsung-fix');
-        } else {
-            arScene.setAttribute('embedded', '');
-        }
-
-        if (skipOverlays) {
-            overlay.style.display = 'none';
-            fullScreenOverlay.style.display = 'none';
-            arScene.style.display = 'block';
-            loadingOverlay.classList.add('show');
-            // Call initialization function from ar.js
-            if (typeof initializeAR === "function") {
-                initializeAR();
-            }
-        } else {
-            overlay.classList.remove('prehide');
-            fullScreenOverlay.classList.remove('prehide');
-
-            startExperienceButton.addEventListener('click', function() {
-                overlay.style.display = 'none';
-                fullScreenOverlay.style.display = 'flex';
-            });
-
-            gotItButton.addEventListener('click', function() {
-                fullScreenOverlay.style.display = 'none';
-                arScene.style.display = 'block';
-                if (typeof initializeAR === "function") {
-                    initializeAR();
-                }
-            });
+        // Initialize AR immediately
+        if (typeof initializeAR === "function") {
+            initializeAR();
         }
     });
-</script>
+    </script>
 
 
 </body>
