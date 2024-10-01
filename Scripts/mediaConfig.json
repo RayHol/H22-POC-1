@@ -1,23 +1,24 @@
 {
     "location1": {
         "common": {
-            "scale": "10 7 1",
+            "scale": "10 2 1",
             "rotation": "0 0 0",
-            "fixedAngleDegrees": -23.42,
-            "initialY": -10.74,
-            "initialZ": -91.76
+            "fixedAngleDegrees": -28.27,
+            "initialY": -13.51,
+            "initialZ": -88.07
         },
         "media": [
             {
                 "type": "image",
-                "url": "./assets/images/01.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
+                "url": "./assets/images/TB-Iconx4.png",
+                "frameUrl": "./assets/images/TB-Icon.png",
                 "info": "Tower Bridge",
-                "audioUrl": ""
+                "audioUrl": "",
+                "link": "https://app.smartify.org"
             },
             {
                 "type": "video",
-                "url": "https://rayhol.github.io/TB_Videos/Videos3/01.mp4",
+                "url": "https://rayhol.github.io/TB_Videos/Videos3/0.mp4",
                 "frameUrl": "./assets/frames/frame2.png",
                 "info": "Tower Bridge",
                 "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/01.mp3"
@@ -26,19 +27,20 @@
     },
     "location2": {
         "common": {
-            "scale": "10 7 1",
+            "scale": "10 10 1",
             "rotation": "0 0 0",
-            "fixedAngleDegrees": -59.98,
-            "initialY": 0.60,
+            "fixedAngleDegrees": -60,
+            "initialY": 0,
             "initialZ": -50.02
         },
         "media": [
             {
                 "type": "image",
-                "url": "./assets/images/02.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
+                "url": "./assets/images/Shard-Iconx4.png",
+                "frameUrl": "./assets/images/Shard-Icon.png",
                 "info": "The Shard",
-                "audioUrl": ""
+                "audioUrl": "",
+                "link": "https://app.smartify.org"
             },
             {
                 "type": "video",
@@ -51,7 +53,7 @@
     },
     "location3": {
         "common": {
-            "scale": "10 7 1",
+            "scale": "10 10 1",
             "rotation": "0 0 0",
             "fixedAngleDegrees": -103.65,
             "initialY": -7.30,
@@ -60,10 +62,11 @@
         "media": [
             {
                 "type": "image",
-                "url": "./assets/images/03.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
+                "url": "./assets/images/Eye-Iconx4.png",
+                "frameUrl": "./assets/images/Eye-Icon.png",
                 "info": "London Eye",
-                "audioUrl": ""
+                "audioUrl": "",
+                "link": "https://app.smartify.org"
             },
             {
                 "type": "video",
@@ -76,7 +79,7 @@
     },
     "location4": {
         "common": {
-            "scale": "10 7 1",
+            "scale": "10 10 1",
             "rotation": "0 0 0",
             "fixedAngleDegrees": -126.54,
             "initialY": -15,
@@ -85,10 +88,11 @@
         "media": [
             {
                 "type": "image",
-                "url": "./assets/images/04.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
+                "url": "./assets/images/Pauls-Iconx4.png",
+                "frameUrl": "./assets/images/Pauls-Icon.png",
                 "info": "St Pauls",
-                "audioUrl": ""
+                "audioUrl": "",
+                "link": "https://app.smartify.org"
             },
             {
                 "type": "video",
@@ -98,105 +102,6 @@
                 "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/04.mp3"
             }
         ]
-    },
-    "location5": {
-        "common": {
-            "scale": "10 7 1",
-            "rotation": "0 90 0",
-            "fixedAngleDegrees": -70,
-            "initialY": 2.06,
-            "initialZ": -30.10
-        },
-        "media": [
-            {
-                "type": "image",
-                "url": "./assets/images/05.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
-                "audioUrl": ""
-            },
-            {
-                "type": "video",
-                "url": "https://rayhol.github.io/TB_Videos/Videos3/05.mp4",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
-                "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/05.mp3"
-            }
-        ]
-    },
-    "location6": {
-        "common": {
-            "scale": "10 7 1",
-            "rotation": "0 90 0",
-            "fixedAngleDegrees": 15,
-            "initialY": -2.43,
-            "initialZ": -32.67
-        },
-        "media": [
-            {
-                "type": "image",
-                "url": "./assets/images/06.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
-                "audioUrl": ""
-            },
-            {
-                "type": "video",
-                "url": "https://rayhol.github.io/TB_Videos/Videos3/06.mp4",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
-                "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/06.mp3"
-            }
-        ]
-    },
-    "location7": {
-        "common": {
-            "scale": "10 7 1",
-            "rotation": "0 90 0",
-            "fixedAngleDegrees": 80,
-            "initialY": 0,
-            "initialZ": -27
-        },
-        "media": [
-            {
-                "type": "image",
-                "url": "./assets/images/07.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
-                "audioUrl": ""
-            },
-            {
-                "type": "video",
-                "url": "https://rayhol.github.io/TB_Videos/Videos3/07.mp4",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
-                "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/07.mp3"
-            }
-        ]
-    },
-    "location8": {
-        "common": {
-            "scale": "10 7 1",
-            "rotation": "0 90 0",
-            "fixedAngleDegrees": 3,
-            "initialY": 3,
-            "initialZ": -25
-        },
-        "media": [
-            {
-                "type": "image",
-                "url": "./assets/images/08.jpg",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Tap to play when the photo is in place",
-                "audioUrl": ""
-            },
-            {
-                "type": "video",
-                "url": "https://rayhol.github.io/TB_Videos/Videos3/08.mp4",
-                "frameUrl": "./assets/frames/frame2.png",
-                "info": "Pause Animation",
-                "audioUrl": "https://rayhol.github.io/TB_Videos/Audio3/08.mp3"
-            }
-        ]
+    
     }
 }

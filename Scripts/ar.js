@@ -163,31 +163,43 @@ function navigateToLocation(locationId) {
 }
 
 function initializeAR() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const locationId = urlParams.get("location");
-
     fetch("./Scripts/mediaConfig.json")
         .then((response) => response.json())
         .then((data) => {
-            // Load media from multiple locations (location1, location2, location3, location4)
-            const locationsToLoad = ['location1', 'location2', 'location3', 'location4'];
-            
-            locationsToLoad.forEach(locationKey => {
-                if (data[locationKey]) {
-                    const locationData = data[locationKey];
-                    const commonValues = locationData.common;
-                    const mediaArray = locationData.media;
-                    
-                    // Initialize media for each location
-                    initializeMedia(mediaArray, commonValues);
-                } else {
-                    console.error(`Invalid location: ${locationKey}`);
-                }
+            // Get the locations from the mediaConfig.json file
+            locations = Object.keys(data); // Get all location keys (location1, location2, etc.)
+
+            // Loop through each location to load its media
+            locations.forEach((locationId) => {
+                const locationData = data[locationId];
+                const commonValues = locationData.common;
+                const mediaArray = locationData.media;
+
+                // For each location, use the provided fixedAngleDegrees, initialY, and initialZ
+                const fixedAngleDegrees = commonValues.fixedAngleDegrees || 0;
+                const currentY = commonValues.initialY || 0;
+                const currentZoom = Math.abs(commonValues.initialZ) || 25;
+
+                // Calculate the position based on the fixedAngleDegrees and currentZoom (initialZ)
+                const radians = (fixedAngleDegrees * Math.PI) / 180;
+                const position = {
+                    x: -currentZoom * Math.sin(radians),
+                    y: currentY,
+                    z: -currentZoom * Math.cos(radians)
+                };
+
+                const rotation = { x: 0, y: fixedAngleDegrees, z: 0 };
+
+                // Loop through each media item and only display 'image' media
+                mediaArray
+                    .filter(mediaItem => mediaItem.type === "image") // Filter only image type media
+                    .forEach((mediaItem, index) => {
+                        displayMedia(mediaItem, index, commonValues, position, rotation);
+                    });
             });
         })
         .catch((error) => console.error("Error loading media config:", error));
 }
-
 
 
 function updateFixedAngleDegrees(newAngle) {
@@ -376,79 +388,60 @@ function initializeMedia(mediaArray, commonValues) {
     const newButton = button.cloneNode(true);
     button.parentNode.replaceChild(newButton, button);
 
-    // Filter media to include only images
-    const imageMediaArray = mediaArray.filter(mediaItem => mediaItem.type === "image");
-
-    // Display only the filtered image media (up to 4 items)
-    const maxMediaToDisplay = Math.min(imageMediaArray.length, 4);
-    imageMediaArray.slice(0, maxMediaToDisplay).forEach((mediaItem, index) => {
-        displayMedia(imageMediaArray, index, commonValues); // Display each image item
+    // Add new event listener for changing media
+    newButton.addEventListener("click", () => {
+        changeMedia(mediaArray, commonValues); // Pass the mediaArray to changeMedia function
     });
 
-    newButton.addEventListener("click", () => {
-        changeMedia(imageMediaArray, commonValues); // Handle media change logic for images
+    // Loop through the mediaArray to display all media items
+    mediaArray.forEach((mediaItem, index) => {
+        displayMedia(mediaArray, index, commonValues); // Pass mediaArray, index, and commonValues to displayMedia
     });
 }
 
 
-
-function displayMedia(mediaArray, index, commonValues, currentPosition, currentRotation) {
+function displayMedia(mediaItem, index, commonValues, currentPosition, currentRotation) {
     let scene = document.querySelector("a-scene");
-    let mediaItem = mediaArray[index];
 
-    // Calculate the position using fixedAngleDegrees, initialY, and initialZ (for zoom)
-    const fixedAngleDegrees = commonValues.fixedAngleDegrees || 0;
-    const radians = (fixedAngleDegrees * Math.PI) / 180;
+    // Create the entity for the image
+    let entity = document.createElement("a-image");
 
-    // Ensure initialZ (zoom) is applied to the position calculation
-    const zoom = commonValues.initialZ || 25; // Default to 25 if initialZ is not provided
-    const positionOffsetX = index * 5; // Offset for each media to avoid overlap
+    // Set the media URL for the image
+    entity.setAttribute("src", mediaItem.url);
 
-    // Calculate position using zoom (initialZ) and fixedAngleDegrees
-    const position = currentPosition || {
-        x: -zoom * Math.sin(radians) + positionOffsetX, // X offset and zoom applied
-        y: commonValues.initialY || 0,                 // Y position from commonValues
-        z: -zoom * Math.cos(radians)                   // Z position for depth (zoom)
-    };
+    // Load the image to get its natural dimensions and maintain the correct aspect ratio
+    const img = new Image();
+    img.src = mediaItem.url;
 
-    const rotation = currentRotation || { x: 0, y: fixedAngleDegrees, z: 0 };
+    img.onload = function() {
+        const naturalWidth = img.width;
+        const naturalHeight = img.height;
+        
+        // Calculate the aspect ratio
+        const aspectRatio = naturalWidth / naturalHeight;
 
-    initialMediaState.position = { ...position };
-    initialMediaState.rotation = { ...rotation };
+        // Extract the base scale from commonValues.scale (assuming it's in the format "width height depth")
+        let scaleComponents = commonValues.scale.split(' ').map(Number);
+        let baseWidth = scaleComponents[0];
+        let baseHeight = scaleComponents[1];
 
-    let entity;
+        // Adjust the height based on the aspect ratio to preserve the natural proportions
+        const adjustedHeight = baseWidth / aspectRatio;
 
-    if (mediaItem.type === "image") {
-        entity = document.createElement("a-image");
-        entity.setAttribute("src", mediaItem.url);
-        entity.setAttribute("position", position);   // Set position with zoom applied
-        entity.setAttribute("rotation", rotation);   // Set rotation
-        entity.setAttribute("scale", commonValues.scale);
+        // Set the new scale while maintaining aspect ratio
+        entity.setAttribute("scale", `${baseWidth} ${adjustedHeight} ${scaleComponents[2]}`);
+        
+        // Set the position and rotation of the entity based on the mediaConfig.json values
+        entity.setAttribute("position", currentPosition);
+        entity.setAttribute("rotation", currentRotation);
         entity.setAttribute("visible", "true");
 
+        // Add the entity to the scene
         scene.appendChild(entity);
-    }
-
-    // Handle audio if present (not relevant to your current case)
-    if (mediaItem.audioUrl) {
-        if (currentAudio) {
-            currentAudio.pause();
-            document.body.removeChild(currentAudio);
-        }
-        const audio = document.createElement('audio');
-        audio.setAttribute('src', mediaItem.audioUrl);
-        audio.setAttribute('id', 'audio-' + index);
-        audio.setAttribute('preload', 'auto');
-        audio.setAttribute('muted', 'true');
-        audio.setAttribute('loop', 'true');
-        document.body.appendChild(audio);
-        currentAudio = audio;
-
-        if (!isIOS() && !isAndroid()) {
-            currentAudio.play();
-        }
-    }
+    };
 }
+
+
 
 
 
