@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Set the viewport and initial scale for mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Enable full-screen mode on Apple devices -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Set the character encoding -->
+    <meta charset="UTF-8" />
+    
+    <!-- Set the title of the webpage -->
+    <title>Smartify - Tower Bridge | Animated Photos</title>
+    
+    <!-- Include the Poppins font from Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap">
+    
+    <!-- Include the custom CSS file for styling -->
+    <link rel="stylesheet" href="./Scripts/index.css">
+</head>
+<body>
+    <!-- Smartify logo -->
+    <img id="logo" src=".\assets\Smartify-logo.svg" alt="Smartify Logo" width="101" height="48">
+    
+    <!-- Image of the painting -->
+    <div class="image-container"> 
+        <img src=".\assets\images\01.jpg" alt="Tower bridge 1" class="fade-image" id="image1">
+        <img src=".\assets\images\02.jpg" alt="Tower bridge 2" class="fade-image" id="image2">
+        <img src=".\assets\images\03.jpg" alt="Tower bridge 3" class="fade-image" id="image3">
+        <img src=".\assets\images\04.jpg" alt="Tower bridge 4" class="fade-image" id="image4">
+        <img src=".\assets\images\05.jpg" alt="Tower bridge 5" class="fade-image" id="image5">
+        <img src=".\assets\images\06.jpg" alt="Tower bridge 6" class="fade-image" id="image6">
+        <img src=".\assets\images\07.jpg" alt="Tower bridge 6" class="fade-image" id="image7">
+        <img src=".\assets\images\08.jpg" alt="Tower bridge 6" class="fade-image" id="image8">
+    </div>
+  
+    <!-- Description of the AR experience -->
+    <div id="description">
+        <p>Bring the old photos to life with our immersive Augmented Reality experience.</p>
+        <p>Tap below, to select the photo to view.</p>
+    </div>
+    
+    <!-- Button to start the AR experience -->
+    <button id="startButton1" onclick="location.href='ar.html?location=location1';">Location R2</button>
+    <button id="startButton2" onclick="location.href='ar.html?location=location2';">Location VII</button>
+    <button id="startButton2" onclick="location.href='ar.html?location=location3';">Location I</button>
+    <button id="startButton2" onclick="location.href='ar.html?location=location4';">Location R3</button>
+    <button id="startButton2" onclick="location.href='ar.html?location=location5';">Location R4</button>
+    <button id="startButton2" onclick="location.href='ar.html?location=location6';">Location R5</button>
+    <button id="startButton2" onclick="location.href='ar.html?location=location7';">Location R1 + R6</button>
+    <button id="startButton2" onclick="location.href='ar.html?location=location8';">Location II</button>
+
+    <script>
+        // Array to hold image elements
+        let images = [];
+        for (let i = 1; i <= 8; i++) {
+            images.push(document.getElementById(`image${i}`));
+        }
+
+        // Variable to track the current image
+        let currentIndex = 0;
+
+        setInterval(function() {
+            // Set all images to transparent
+            images.forEach(img => img.style.opacity = '0');
+
+            // Set the current image to visible
+            images[currentIndex].style.opacity = '1';
+
+            // Increment the index, reset to 0 if it reaches the end
+            currentIndex = (currentIndex + 1) % images.length;
+        }, 2000); // 5000ms = 5s
+    </script>
+</body>
+</html>
