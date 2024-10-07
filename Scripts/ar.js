@@ -388,10 +388,10 @@ function initializeMedia(mediaArray, commonValues) {
     const newButton = button.cloneNode(true);
     button.parentNode.replaceChild(newButton, button);
 
-    // Add new event listener for changing media
-    newButton.addEventListener("click", () => {
-        changeMedia(mediaArray, commonValues); // Pass the mediaArray to changeMedia function
-    });
+    // // Add new event listener for changing media
+    // newButton.addEventListener("click", () => {
+    //     changeMedia(mediaArray, commonValues); // Pass the mediaArray to changeMedia function
+    // });
 
     // Loop through the mediaArray to display all media items
     mediaArray.forEach((mediaItem, index) => {
@@ -399,126 +399,150 @@ function initializeMedia(mediaArray, commonValues) {
     });
 }
 
+function triggerHapticFeedback() {
+    // Check if the Vibration API is supported
+    if (navigator.vibrate) {
+        navigator.vibrate(50); // Vibrate for 50 milliseconds
+    } else {
+        console.warn("Vibration API not supported on this device.");
+    }
+}
 
+
+
+// Function to display media and handle raycaster interactions
 function displayMedia(mediaItem, index, commonValues, currentPosition, currentRotation) {
     let scene = document.querySelector("a-scene");
 
     // Create the entity for the image
     let entity = document.createElement("a-image");
-
-    // Set the media URL for the image
     entity.setAttribute("src", mediaItem.url);
-
-    // Add the 'clickable' class to make the image detectable by the raycaster
     entity.classList.add('clickable');
 
-    // Set the scale exactly as defined in the mediaConfig.json
     let scaleComponents = commonValues.scale.split(' ').map(Number);
     entity.setAttribute("scale", `${scaleComponents[0]} ${scaleComponents[1]} ${scaleComponents[2]}`);
-
-    // Set the position and rotation of the entity based on the mediaConfig.json values
     entity.setAttribute("position", currentPosition);
     entity.setAttribute("rotation", currentRotation);
     entity.setAttribute("visible", "true");
 
-    // Add the entity to the scene
     scene.appendChild(entity);
 
-    // Add a raycaster event to show the CTA modal when the image is hovered (intersected)
+    // Raycaster interaction to change color and show modal
     entity.addEventListener('raycaster-intersected', function () {
         console.log('Image intersected:', mediaItem.url);
-        entity.setAttribute('material', 'color', 'green');  // Change color on hover/tap
+        entity.setAttribute('material', 'color', 'green'); // Change color on hover
+        
+        // Trigger haptic feedback
+        triggerHapticFeedback();
 
         // Show the modal with the CTA link
-        const modal = document.getElementById('cta-modal');
-        const ctaLink = document.getElementById('cta-link');
-
-        // Set the link URL
-        if (mediaItem.link) {
-            ctaLink.href = mediaItem.link;
-        } else {
-            ctaLink.href = '#';
-        }
-
-        // Display the modal
-        modal.style.display = 'flex';
+        showCTAModal(mediaItem.link);
     });
 
     entity.addEventListener('raycaster-intersected-cleared', function () {
         console.log('Image no longer intersected:', mediaItem.url);
-        entity.setAttribute('material', 'color', 'white');  // Reset color
+        entity.setAttribute('material', 'color', 'white'); // Reset color
     });
 }
 
-// Close modal when clicking on the 'X' button
-document.getElementById('close-cta-modal').addEventListener('click', function() {
-    document.getElementById('cta-modal').style.display = 'none';
-});
 
-// Optional: Close modal when clicking outside of the modal content
-window.addEventListener('click', function(event) {
+
+
+
+// Function to show the CTA modal with dragging functionality
+function showCTAModal(link) {
     const modal = document.getElementById('cta-modal');
-    if (event.target === modal) {
-        modal.style.display = 'none';
-    }
-});
+    const iframe = document.getElementById('cta-iframe');
 
+    // Set the link for the iframe
+    iframe.src = link || '#'; // Set default if link is empty
+    modal.style.display = 'flex'; // Ensure modal is visible
 
-
-
-
-
-function fadeOutElement(element) {
-    element.setAttribute("animation", {
-        property: "opacity",
-        to: 0,
-        dur: 2000,
-        easing: "easeInOutQuad",
-        startEvents: "startFadeOut",
-    });
-
-    element.addEventListener("animationcomplete", () => {
-        element.parentNode.removeChild(element);
-    });
-
-    element.emit("startFadeOut");
-}
-
-function changeMedia(mediaArray, commonValues) {
-    if (isChangingMedia) {
-        return;
-    }
-    isChangingMedia = true;
-
-    // Preserve current position and rotation
-    const currentPosition = mediaEntity.getAttribute("position");
-    const currentRotation = mediaEntity.getAttribute("rotation");
-
-    // Update modelIndex to the next media element in the array
-    modelIndex = (modelIndex + 1) % mediaArray.length;
-
-    // Display the new media element while preserving the position and rotation
-    displayMedia(mediaArray, modelIndex, commonValues, currentPosition, currentRotation);
-
-    // Ensure any audio is handled correctly
-    if (currentAudio) {
-        if (currentAudio.paused) {
-            currentAudio.muted = false; // Ensure the audio is unmuted
-            currentAudio.play().catch(error => {
-            });
-        } else {
-            currentAudio.pause();
-        }
-    }
-
-    // Reset the flag after a delay to allow further media changes
+    // Initialize modal position and height
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.style.height = '30%'; // Set height to 20%
+    modal.style.transform = 'translateY(100%)'; // Start off-screen
+    modal.style.transition = 'transform 0.3s ease'; // Smooth transition for animation
     setTimeout(() => {
-        isChangingMedia = false;
-    }, 1000); // Adjust the timeout as needed
+        modal.style.transform = 'translateY(0)'; // Animate to its initial position
+    }, 0); // Ensure the transition is applied after display
 
-    // Show the congratulations pop-up after a short delay for testing
-    setTimeout(showCongratulationsPopup, 60000); // Set to 0 for immediate testing
+    // Initialize touch event variables
+    let startY;
+    let currentY;
+    let isDragging = false;
+    let dragDistance = 0;
+
+    // Add touch event listeners for dragging
+    modal.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        isDragging = true; // Set dragging flag
+        dragDistance = 0; // Reset drag distance
+        modal.style.transition = 'none'; // Disable animation during drag
+    });
+
+    modal.addEventListener('touchmove', (e) => {
+        if (!isDragging) return; // Only process if dragging
+        currentY = e.touches[0].clientY;
+        dragDistance = currentY - startY;
+
+        // Handle dragging up to expand and down to close
+        if (dragDistance > 0 && modalContent.style.height === '100%') {
+            // Dragging down when in full-screen mode
+            modal.style.transform = `translateY(${dragDistance}px)`;
+        } else if (dragDistance < 0 && modalContent.style.height === '30%') {
+            // Dragging up from the initial position
+            modal.style.transform = `translateY(${Math.min(dragDistance, 0)}px)`;
+        }
+    });
+
+    modal.addEventListener('touchend', () => {
+        // Smoothly transition the modal based on drag distance
+        if (dragDistance > window.innerHeight * 0.2 && modalContent.style.height === '100%') {
+            // If dragged down more than 20% of the screen height, move back to initial position
+            modalContent.style.height = '30%';
+            modal.style.transition = 'transform 0.3s ease'; // Re-enable animation
+            modal.style.transform = 'translateY(0)'; // Return to initial position
+        } else if (dragDistance > window.innerHeight * 0.4) {
+            // If dragged down more than 40% of the screen height, close the modal
+            hideCTAModal();
+        } else if (dragDistance < -window.innerHeight * 0.2 && modalContent.style.height === '30%') {
+            // If dragged up more than 20% of the screen height, go to full screen
+            modalContent.style.height = '100%';
+            modal.style.transition = 'transform 0.3s ease'; // Re-enable animation
+            modal.style.transform = 'translateY(0)';
+        } else {
+            // Otherwise, ensure the modal stays in its current state
+            modal.style.transition = 'transform 0.3s ease'; // Re-enable animation
+            modal.style.transform = 'translateY(0)';
+        }
+
+        isDragging = false; // Reset dragging flag
+    });
 }
+
+// Function to hide the CTA modal
+function hideCTAModal() {
+    const modal = document.getElementById('cta-modal');
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.style.height = '30%'; // Reset height to initial
+    modal.style.transition = 'transform 0.3s ease'; // Smooth transition out
+    modal.style.transform = 'translateY(100%)'; // Animate out of view
+
+    setTimeout(() => {
+        modal.style.display = 'none'; // Hide after animation
+        const iframe = document.getElementById('cta-iframe');
+        iframe.src = ''; // Reset iframe src to avoid loading when hidden
+    }, 300); // Match this duration with the CSS transition duration
+}
+
+// Close button functionality
+document.getElementById('close-cta-modal').addEventListener('click', hideCTAModal);
+
+
+
+
+
 
 
 
